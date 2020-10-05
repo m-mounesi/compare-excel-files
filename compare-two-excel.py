@@ -19,7 +19,7 @@ from multiprocessing import Process
 
 def excel_diff(df_OLD, df_NEW, path_OLD, path_NEW, suffix):
 
-    print("\nStart Time for ", suffix, " :", datetime.now().strftime("%H:%M:%S"))
+    print("\nStart Time for {suffix} :", datetime.now().strftime("%H:%M:%S"))
     start_time = time.perf_counter()
     ## Perform Diff
     dfDiff = df_NEW.copy()
@@ -44,10 +44,10 @@ def excel_diff(df_OLD, df_NEW, path_OLD, path_NEW, suffix):
 
     dfDiff = dfDiff.sort_index().fillna('')
 
-    print("\nProcessing time for ", suffix, ":", datetime.now().strftime("%H:%M:%S"))
-    print("\nTotal new rows in new report for", suffix, ": ", len(newRows), "\n")
+    print("\nProcessing time for {suffix}:", datetime.now().strftime("%H:%M:%S"))
+    print("\nTotal new rows in new report for {suffix}: ", len(newRows), "\n")
     
-    print("\nSaving the outputs in new excel for ", suffix, "... Current Time: ", datetime.now().strftime("%H:%M:%S")) 
+    print("\nSaving the outputs in new excel for {suffix} Current Time: ", datetime.now().strftime("%H:%M:%S")) 
     
      
     ## Save output and format
@@ -80,16 +80,18 @@ def excel_diff(df_OLD, df_NEW, path_OLD, path_NEW, suffix):
     
     ## Saving Workbook
     writer.save()
-    print("\nSaved Excel sheet for ", suffix, "in ", fname ,".")
+    print("\nSaved Excel sheet for {suffix} in {fname} .")
     print("\nEnd Time for {} : {}".format(suffix,datetime.now().strftime("%H:%M:%S")))
-    end_time = time.perf_counter()
     
+    ## Calculate time for Env Processing
+    end_time = time.perf_counter()
     total_process_time = '{:0.2f}'.format(((end_time - start_time)/60))
     print(f"Total Processing Time for {suffix}: {total_process_time} minutes")
 
 def main(args):
 
-    print("Start Time of Program :", datetime.now().strftime("%H:%M:%S"), "\n")
+    print("\nStart Time of Program :", datetime.now().strftime("%H:%M:%S"), "\n")
+    start_time = time.perf_counter()
 
     ## Set Variables
     indexColName = args.index
@@ -102,7 +104,7 @@ def main(args):
     for (env, sheet_num) in zip(["PROD", "TEST"],[0, 1]):
         
         ## Reading Sheets from Excel files
-        print("\nReading sheet for ", env, "...")
+        print("\nReading sheet for {env} ...")
         df_OLD = pd.read_excel(path_OLD, sheet_name=sheet_num, index_col=indexColName).fillna(0)
         df_NEW = pd.read_excel(path_NEW, sheet_name=sheet_num, index_col=indexColName).fillna(0)
         
@@ -113,6 +115,12 @@ def main(args):
     ## Complete the processes
     for proc in procs:
         proc.join()
+
+    ## Calculate Total Run time
+    end_time = time.perf_counter()
+    total_process_time = '{:0.2f}'.format(((end_time - start_time)/60))
+    print(f"\nTotal Run Time: {total_process_time} minutes")
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
