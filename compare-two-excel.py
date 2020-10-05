@@ -12,6 +12,7 @@ import argparse
 import pandas as pd
 import sys
 import xlsxwriter
+import time
 from pathlib import Path
 from datetime import datetime
 from multiprocessing import Process
@@ -19,7 +20,7 @@ from multiprocessing import Process
 def excel_diff(df_OLD, df_NEW, path_OLD, path_NEW, suffix):
 
     print("\nStart Time for ", suffix, " :", datetime.now().strftime("%H:%M:%S"))
-    
+    start_time = time.perf_counter()
     ## Perform Diff
     dfDiff = df_NEW.copy()
     newRows = []
@@ -68,7 +69,7 @@ def excel_diff(df_OLD, df_NEW, path_OLD, path_NEW, suffix):
 
     
     ## Highlight changed cells
-    worksheet.conditional_format('A1:ZZ1000', {'type': 'text',
+    worksheet.conditional_format('A1:AZ100000', {'type': 'text',
                                             'criteria': 'containing',
                                             'value':'→',
                                             'format': highlight_fmt})
@@ -81,18 +82,17 @@ def excel_diff(df_OLD, df_NEW, path_OLD, path_NEW, suffix):
     writer.save()
     print("\nSaved Excel sheet for ", suffix, "in ", fname ,".")
     print("\nEnd Time for {} : {}".format(suffix,datetime.now().strftime("%H:%M:%S")))
+    end_time = time.perf_counter()
+    
+    total_process_time = '{:0.2f}'.format(((end_time - start_time)/60))
+    print(f"Total Processing Time for {suffix}: {total_process_time} minutes")
 
 def main(args):
 
     print("Start Time of Program :", datetime.now().strftime("%H:%M:%S"), "\n")
 
     ## Set Variables
-    #indexColName = sys.argv[3]
-    
-    #path_OLD = Path(sys.argv[1])
-    #path_NEW = Path(sys.argv[2])
     indexColName = args.index
-    
     path_OLD = Path(args.old_excel)
     path_NEW = Path(args.new_excel)
  
