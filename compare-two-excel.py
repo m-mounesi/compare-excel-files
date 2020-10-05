@@ -1,14 +1,4 @@
-﻿#########################################################
-## Compare Two Excel files 
-#########################################################
-#########################################################
-## Author: Sanny Patel
-## Version: 1.0.1
-## Mmaintainer: Sanny Patel
-## Email: p_sunny27@live.com, sanny.patel@capgemini.com
-#########################################################
-
-import argparse
+﻿import argparse
 import pandas as pd
 import sys
 import xlsxwriter
